@@ -259,8 +259,14 @@ export default function(options) {
     var term, key = (e.char || String.fromCharCode(e.charCode));
 
     // if we just started with an options.key, set start and end.
+    // but make sure we're not at the end of a word.
+    // partially reverting my previous commit.
     if (key === options.key && !autoCompleting()) {
-      completeStart = completeEnd = Discourse.Utilities.caretPosition(me[0]) + 1;
+      var caretPosition = Discourse.Utilities.caretPosition(me[0]);
+      var prevChar = me.val().charAt(caretPosition - 1);
+      if (!prevChar || /\s/.test(prevChar)) {
+        completeStart = completeEnd = caretPosition + 1;
+      }
     }
 
     if (!options.key) {
